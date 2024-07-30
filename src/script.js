@@ -24,8 +24,18 @@ const scene = new THREE.Scene();
 /**
  * Environment MAp
  */
-scene.environmentIntensity = 4
-gui.add(scene, "environmentIntensity").min(0).max(10).step(0.001).name("Environment Intensity");
+scene.environmentIntensity = 1
+scene.backgroundBlurriness = 0
+scene.backgroundIntensity = 1
+
+// scene.backgroundRotation.x = 1
+// scene.environmentRotation.x = 1 
+
+gui.add(scene, "environmentIntensity").min(0).max(10).step(0.01).name("Environment Intensity");
+gui.add(scene, 'backgroundBlurriness').min(0).max(1).step(0.01).name('Background Blurriness');
+gui.add(scene, 'backgroundIntensity').min(0).max(4).step(0.01).name('Background Intensity');
+gui.add(scene.backgroundRotation, 'y').min(0).max(2 * Math.PI).step(0.01).name('Background Rotation X');
+gui.add(scene.environmentRotation, 'y').min(0).max(2 * Math.PI).step(0.01).name('Environment Rotation X');
 
 // LDR cube texture
 const environmentMap = cubeTextureLoader.load([
