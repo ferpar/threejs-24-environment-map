@@ -53,9 +53,9 @@ const scene = new THREE.Scene();
 // scene.background = environmentMap;
 
 // HDR (RGBE) environment map
-rgbeLoader.load('/environmentMaps/blender2k.hdr', (environmentMap) => {
+rgbeLoader.load('/environmentMaps/blenderLights2k.hdr', (environmentMap) => {
     environmentMap.mapping = THREE.EquirectangularReflectionMapping;
-    scene.background = environmentMap
+    // scene.background = environmentMap
     scene.environment = environmentMap
 })
 
