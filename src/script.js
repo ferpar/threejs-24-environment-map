@@ -86,6 +86,7 @@ const holyDonut = new THREE.Mesh(
   new THREE.TorusGeometry(8, 0.5),
   new THREE.MeshBasicMaterial({color: new THREE.Color(10,4,2)})
 )
+holyDonut.layers.enable(1)
 holyDonut.position.y = 3.5
 scene.add(holyDonut)
 
@@ -100,6 +101,8 @@ scene.environment = cubeRenderTarget.texture
 
 // Cube Camera
 const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
+cubeCamera.layers.set(1)
+
 
 /**
  * Torus Knot
