@@ -11,6 +11,7 @@ import { GroundedSkybox } from "three/examples/jsm/Addons.js";
 const gltfLoader = new GLTFLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 const rgbeLoader = new RGBELoader();
+const textureLoader = new THREE.TextureLoader();
 
 /**
  * Base
@@ -56,20 +57,49 @@ scene.backgroundIntensity = 1
 // HDR (RGBE) environment map
 // rgbeLoader.load('/environmentMaps/blenderLights2k.hdr', (environmentMap) => {
 //     environmentMap.mapping = THREE.EquirectangularReflectionMapping;
-//     // scene.background = environmentMap
+//     // scenegg.background = environmentMap
 //     scene.environment = environmentMap
 // })
 
 // Ground Projected Skybox
-rgbeLoader.load('/environmentMaps/2/2k.hdr', (environmentMap) => {
-    environmentMap.mapping = THREE.EquirectangularReflectionMapping;
-    // scene.background = environmentMap
-    scene.environment = environmentMap
-    const skybox = new GroundedSkybox(environmentMap, 15, 70);
-    // skybox.material.wireframe = true;
-    skybox.position.y = 15
-    scene.add(skybox);
-})
+// rgbeLoader.load('/environmentMaps/2/2k.hdr', (environmentMap) => {
+//     environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+//     // scene.background = environmentMap
+//     scene.environment = environmentMap
+//     const skybox = new GroundedSkybox(environmentMap, 15, 70);
+//     // skybox.material.wireframe = true;
+//     skybox.position.y = 15
+//     scene.add(skybox);
+// })
+
+/**
+ * Real time environment map (based on LDR)
+ */
+const environmentMap = textureLoader.load('/environmentMaps/blockadesLabsSkybox/interior_views_cozy_wood_cabin_with_cauldron_and_p.jpg') 
+environmentMap.mapping = THREE.EquirectangularReflectionMapping
+environmentMap.colorSpace = THREE.SRGBColorSpace
+
+scene.background = environmentMap
+
+// Holy Donut
+const holyDonut = new THREE.Mesh(
+  new THREE.TorusGeometry(8, 0.5),
+  new THREE.MeshBasicMaterial({color: new THREE.Color(10,4,2)})
+)
+holyDonut.position.y = 3.5
+scene.add(holyDonut)
+
+// Cube Render Target
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(
+  256,
+  {
+    type: THREE.HalfFloatType
+  }
+)
+scene.environment = cubeRenderTarget.texture
+
+// Cube Camera
+const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
 
 /**
  * Torus Knot
@@ -77,7 +107,7 @@ rgbeLoader.load('/environmentMaps/2/2k.hdr', (environmentMap) => {
 const torusKnot = new THREE.Mesh(
   new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
   new THREE.MeshStandardMaterial({
-    roughness: 0.3,
+    roughness: 0,
     metalness: 1,
     color: 0xaaaaaa,
   })
@@ -150,6 +180,12 @@ const clock = new THREE.Clock();
 const tick = () => {
   // Time
   const elapsedTime = clock.getElapsedTime();
+
+  // Real time environment map
+   if (holyDonut) {
+      holyDonut.rotation.x = Math.sin(elapsedTime) * 2
+      cubeCamera.update(renderer, scene) 
+   }
 
   // Update controls
   controls.update();
