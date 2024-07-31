@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+import { GroundedSkybox } from "three/examples/jsm/Addons.js";
 
 /**
  * Loaders
@@ -26,9 +27,9 @@ const scene = new THREE.Scene();
 /**
  * Environment MAp
  */
-// scene.environmentIntensity = 1
-// scene.backgroundBlurriness = 0
-// scene.backgroundIntensity = 1
+scene.environmentIntensity = 1
+scene.backgroundBlurriness = 0
+scene.backgroundIntensity = 1
 
 // // scene.backgroundRotation.x = 1
 // // scene.environmentRotation.x = 1 
@@ -53,10 +54,21 @@ const scene = new THREE.Scene();
 // scene.background = environmentMap;
 
 // HDR (RGBE) environment map
-rgbeLoader.load('/environmentMaps/blenderLights2k.hdr', (environmentMap) => {
+// rgbeLoader.load('/environmentMaps/blenderLights2k.hdr', (environmentMap) => {
+//     environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+//     // scene.background = environmentMap
+//     scene.environment = environmentMap
+// })
+
+// Ground Projected Skybox
+rgbeLoader.load('/environmentMaps/2/2k.hdr', (environmentMap) => {
     environmentMap.mapping = THREE.EquirectangularReflectionMapping;
     // scene.background = environmentMap
     scene.environment = environmentMap
+    const skybox = new GroundedSkybox(environmentMap, 15, 70);
+    // skybox.material.wireframe = true;
+    skybox.position.y = 15
+    scene.add(skybox);
 })
 
 /**
